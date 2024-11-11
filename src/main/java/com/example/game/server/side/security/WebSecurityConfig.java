@@ -16,11 +16,11 @@ public class WebSecurityConfig {
         http
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/game-websocket/**", "/app/**", "/topic/**").permitAll() // Allow access to WebSocket paths
+                        .requestMatchers("/game-websocket/**", "/app/**", "/topic/**", "/users").permitAll() // Allow access to WebSocket paths
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/game-websocket/**") // Disable CSRF for WebSocket
+                        .ignoringRequestMatchers("/game-websocket/**", "/users") // Disable CSRF for WebSocket
                 );
 
         return http.build();
