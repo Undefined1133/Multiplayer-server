@@ -9,11 +9,11 @@ public class UDPPacket {
     private byte[] payload;    // variable-length payload
 
     // Constructor
-    public UDPPacket(byte messageType, int playerId, byte[] payload) {
+    public UDPPacket(byte messageType, int playerId, byte[] payload, short packetLength) {
         this.messageType = messageType;
         this.playerId = playerId;
         this.payload = payload;
-        this.packetLength = (short) (payload.length + 7); // 7 bytes for header
+        this.packetLength = packetLength;// 7 bytes for header
     }
 
     // Getters and setters
@@ -71,6 +71,6 @@ public class UDPPacket {
         byte[] payload = new byte[packetLength - 7];
         buffer.get(payload);
 
-        return new UDPPacket(messageType, playerId, payload);
+        return new UDPPacket(messageType, playerId, payload, packetLength);
     }
 }
