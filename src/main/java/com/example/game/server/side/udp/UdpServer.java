@@ -43,6 +43,7 @@ public class UdpServer {
             return false;
         });
     }
+
     @PostConstruct
     public void startUdpServer() {
         new Thread(() -> {

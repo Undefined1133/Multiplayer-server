@@ -18,7 +18,10 @@ public class UserController {
 
     @GetMapping("/users")
     public List<User> getUsers() {
-        return userService.getAllUsers();
+
+        System.out.println("AGAAGHAGHHAHAA");
+        return null;
+//        return userService.getAllUsers();
     }
 
     @PostMapping("/users")

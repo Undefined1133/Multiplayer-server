@@ -17,4 +17,18 @@ public class WebSocketController {
         logger.info("HELLO????" + message);
         return "Hello, here is ur message :) " + message;
     }
+
+    @MessageMapping("/bob")
+    @SendTo("/topic/players/connected")
+    public String logPlayerConnected(String message) {
+        logger.info("Someone joined the lobby :D");
+        return message;
+    }
+
+    @MessageMapping("/disconnect")
+    @SendTo("/topic/players/disconnected")
+    public String logPlayerDisconnected(String message) {
+        logger.info("Someone disconnected");
+        return message;
+    }
 }
