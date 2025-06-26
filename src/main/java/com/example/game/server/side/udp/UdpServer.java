@@ -80,10 +80,10 @@ public class UdpServer {
     }
 
     private void handlePacket(byte[] data, int length, InetAddress senderAddress, int senderPort, DatagramSocket udpSocket) {
-        final var buffer = ByteBuffer.wrap(data, 0, length);
-        final var messageType = buffer.get(0);
-        final var packetLength = Short.reverseBytes(buffer.getShort(1));
-        final var playerId = buffer.get(3);
+        final var buffer = ByteBuffer.wrap(data, 0, length).order(ByteOrder.LITTLE_ENDIAN);
+        byte messageType = buffer.get(0);         // 1 byte
+        short packetLength = buffer.getShort(1);  // 2 bytes (Little Endian)
+        int playerId = buffer.getInt(3);          // 4 bytes (Little Endian)
         final var extractedBytes = Arrays.copyOfRange(data, 7, 19);
         final var receivedPacket = new UDPPacket(messageType, playerId, extractedBytes, packetLength);
         System.out.println("Message type " + messageType);

@@ -29,9 +29,9 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String sessionId = headerAccessor.getSessionId();
-        String playerId = headerAccessor.getFirstNativeHeader("playerId");
+        final var headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        final var sessionId = headerAccessor.getSessionId();
+        final var playerId = headerAccessor.getFirstNativeHeader("playerId");
         if (playerId != null) {
             headerAccessor.getSessionAttributes().put("playerId", playerId);
             // Consider using that one instead of sending connection message ;)
@@ -44,9 +44,9 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String sessionId = headerAccessor.getSessionId();
-        String destination = headerAccessor.getDestination(); // The destination the client subscribed to
+        final var headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        final var sessionId = headerAccessor.getSessionId();
+        final var destination = headerAccessor.getDestination(); // The destination the client subscribed to
 
         logger.info("New subscription to destination: " + destination + " from session: " + sessionId);
 
@@ -56,8 +56,8 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketUnsubscribeListener(SessionUnsubscribeEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String sessionId = headerAccessor.getSessionId();
+        final var headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        final var sessionId = headerAccessor.getSessionId();
         logger.info("Unsubscribed from session: " + sessionId);
 
         // Remove from tracked subscriptions
@@ -66,14 +66,14 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String sessionId = headerAccessor.getSessionId();
+        final var headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        final var sessionId = headerAccessor.getSessionId();
         logger.info("WebSocket connection closed for session ID: " + sessionId);
         // Try to get playerId from session attributes
         final var playerIdObj = headerAccessor.getSessionAttributes().get("playerId");
 
         if (playerIdObj != null) {
-            String playerId = playerIdObj.toString();
+            final var playerId = playerIdObj.toString();
             logger.info("Player disconnected: " + playerId);
             messagingTemplate.convertAndSend("/topic/players/disconnected", playerId);
         } else {
