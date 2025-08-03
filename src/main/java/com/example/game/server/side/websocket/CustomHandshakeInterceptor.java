@@ -16,16 +16,14 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                   WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        // This method is called before the WebSocket handshake is complete
-        logger.info("New WebSocket connection from: " + request.getRemoteAddress());
+                                   WebSocketHandler wsHandler, Map<String, Object> attributes) {
+        logger.info("New WebSocket connection from: {}", request.getRemoteAddress());
         return true;  // Continue the handshake process
     }
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                Exception exception) {
-        // This method is called after the handshake is complete
-        logger.info("WebSocket handshake completed: " + request.getRemoteAddress());
+        logger.info("WebSocket handshake completed: {}", request.getRemoteAddress());
     }
 }
