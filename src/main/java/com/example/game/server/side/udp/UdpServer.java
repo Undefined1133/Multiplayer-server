@@ -64,6 +64,7 @@ public class UdpServer {
                     final var packetData = packet.getData();
                     final var length = packet.getLength();
 
+                    // Register the player if not already in the list
                     final var clientKey = packet.getAddress().getHostAddress() + ":" + packet.getPort();
                     connectedPlayers.putIfAbsent(clientKey, new InetSocketAddress(packet.getAddress(), packet.getPort()));
                     updateHeartbeat(clientKey);
@@ -111,7 +112,7 @@ public class UdpServer {
     // Handle movement (example)
     private void handleMove(UDPPacket packet, InetAddress senderAddress, int senderPort, DatagramSocket udpSocket) {
         final var payloadBuffer = ByteBuffer.wrap(packet.getPayload());
-        payloadBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        payloadBuffer.order(ByteOrder.LITTLE_ENDIAN); // Ensure correct byte order (Little Endian)
         logger.info("Received Payload: {}", Arrays.toString(packet.getPayload()));
 
         // Read the first 12 bytes as a Vector3 (3 floats)
