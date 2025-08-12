@@ -82,15 +82,29 @@ public class UdpServer {
 
     private void handlePacket(byte[] data, int length, InetAddress senderAddress, int senderPort, DatagramSocket udpSocket) {
         final var buffer = ByteBuffer.wrap(data, 0, length).order(ByteOrder.LITTLE_ENDIAN);
-        byte messageType = buffer.get(0);
-        short packetLength = buffer.getShort(1);
-        int playerId = buffer.getInt(3);
-        final var extractedBytes = Arrays.copyOfRange(data, 7, 19);
-        final var receivedPacket = new UDPPacket(messageType, playerId, extractedBytes, packetLength);
+        final var messageType = buffer.get(0);
+        final var packetLength = buffer.getShort(1); // now correctly reads 2 bytes
+        final var playerId = buffer.getInt(3);
+
+        // Payload starts at byte 7, length = packetLength - header(7)
+        final var payloadLength = packetLength - 7;
+        final var payload = Arrays.copyOfRange(data, 7, 7 + payloadLength);
+
+        // Extract floats from first 12 bytes
+        final var payloadBuffer = ByteBuffer.wrap(payload).order(ByteOrder.LITTLE_ENDIAN);
+        final var x = payloadBuffer.getFloat(0);
+        final var y = payloadBuffer.getFloat(4);
+        final var z = payloadBuffer.getFloat(8);
+
+        // Last byte is facing direction
+        final var facing = payload[12]; // 0 = right, 1 = left
+
         logger.info("Message type {}", messageType);
         logger.info("Packet length {}", packetLength);
         logger.info("PlayerId {}", playerId);
-        logger.info("Extracted bytes : {}", extractedBytes.length);
+        logger.info("X={}, Y={}, Z={}, Facing={}", x, y, z, facing);
+
+        final var receivedPacket = new UDPPacket(messageType, playerId, payload, packetLength);
 
         switch (messageType) {
             case 0:
@@ -152,9 +166,9 @@ public class UdpServer {
         final var payload = packet.getPayload();
         logger.info("Creating buffer with payload length : {}", packet.getPacketLength());
         short packetLength = packet.getPacketLength();
+        final var buffer = ByteBuffer.allocate(packetLength);
         // TODO not a todo :) but this one is crucial in order to maintain same order of bytes as when received,
         //  be careful with modifying this
-        final var buffer = ByteBuffer.allocate(packetLength);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.put(messageType);
         buffer.putShort(packetLength);
